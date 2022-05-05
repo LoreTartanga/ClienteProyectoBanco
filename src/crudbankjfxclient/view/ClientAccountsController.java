@@ -107,7 +107,8 @@ public class ClientAccountsController {
             //show window
             stage.show();
             LOGGER.info("Client Accounts view initialized.");
-        }catch(Exception e){
+        }
+        catch(Exception e){
             String errorMsg="Error opening window:\n" +e.getMessage();    
             this.showErrorAlert(errorMsg);
             LOGGER.log(Level.SEVERE,errorMsg);            
