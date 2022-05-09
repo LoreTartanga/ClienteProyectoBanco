@@ -10,13 +10,17 @@ import clientside.model.Customer;
 import clientside.controller.CustomerManager;
 import clientside.model.Movement;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Platform;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.event.Event;
 import javafx.fxml.FXML;
@@ -32,6 +36,8 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
+import javax.swing.table.DefaultTableModel;
+import java.awt.Color;
 
 /**
  * FXML Controller class
@@ -45,17 +51,17 @@ public class CustomerListController  {
     @FXML
     private TextField tfBalance;
     @FXML
-    private TableView<?> tbCustomer;
+    private TableView<Customer> tbCustomer;
     @FXML
-    private TableColumn<?, ?> tcId;
+    private TableColumn tcId;
     @FXML
-    private TableColumn<?, ?> tcFirstName;
+    private TableColumn tcFirstName;
     @FXML
-    private TableColumn<?, ?> tcLastName;
+    private TableColumn tcLastName;
     @FXML
-    private TableColumn<?, ?> tcPhone;
+    private TableColumn tcPhone;
     @FXML
-    private TableColumn<?, ?> tcTotalBalance;
+    private TableColumn tcTotalBalance;
     @FXML
     private Label lbCustomrt;
 
@@ -101,45 +107,45 @@ public class CustomerListController  {
             tcFirstName.setCellValueFactory(new PropertyValueFactory<>("firstName"));
             tcLastName.setCellValueFactory(new PropertyValueFactory<>("lastName"));
             tcPhone.setCellValueFactory(new PropertyValueFactory<>("phone"));
-            //tcBalance.setCellValueFactory(new PropertyValueFactory<>("balance"));
+            tcTotalBalance.setCellValueFactory(new PropertyValueFactory<>("position"));
          
+            
             customerList= manager.getAllCustomer();
-            int  CantidadClientes= customerList.size();
+            Double totalBalance=0.0;
             if(customerList!=null)
-                for(int i=0;i<=CantidadClientes;i+=1){
-                    Customer customer=manager.getCustomerAccountsFullInfo(customerList.get(i).getId());
+                for(Customer customer: customerList ){
                     List<Account> accounts=customer.getAccounts();
                     //if the client has no accounts
-                    if(accounts==null)
-                        throw new NoSuchElementException("Client has no Accounts");
-                    //set total balance as the sum of each account balance
-                    Double totalBalance= accounts.stream()
-                    .mapToDouble(Account::getBalance)
-                    .sum();
-                    //tfBalance.setText(totalBalance.toString());
-                   }
-           
-          
-            
-            // if(customerList==null)
-            //     throw new NoSuchElementException("No exist Clients");
-            //if(customerList!=null)
-                //tbCustomer.setItems(FXCollections.observableList(customerList));
-            
-            
+                    totalBalance=0.0;
+                    if(accounts!=null){
+                        totalBalance= accounts.stream()
+                        .mapToDouble(Account::getBalance)
+                        .sum();
+                        customer.setPosition(totalBalance); 
+                        //tfBalance.setText(customer.getPosition().toString());
+                        }
+                    if(accounts==null){
+                        customer.setPosition(totalBalance);  
+                        }
+                   }               
+            tbCustomer.setItems(FXCollections.observableList(customerList));
             //align amounts
             tcId.setStyle("-fx-alignment: center-right;");
             tcPhone.setStyle("-fx-alignment: center-right;");
             tcTotalBalance.setStyle("-fx-alignment: center-right;");
-            
+            tfBalance.setStyle("-fx-alignment: center;");
             //disable balance
             tfBalance.setDisable(true);
             //focus on table
             tbCustomer.requestFocus();
             //set event handlers
-          
+            tbCustomer.getSelectionModel().selectedItemProperty()
+                     .addListener(this::handleOnSelectCustomer);
+            //Seleccionamos la primera fila de la tabla por defecto.
+            tbCustomer.getSelectionModel().selectFirst();
             btExit.setOnAction(this::handleExitAction);
             stage.setOnCloseRequest(this::handleExitAction);
+
             //show window
             stage.show();
             LOGGER.info("Clients Positions view initialized.");
@@ -149,13 +155,43 @@ public class CustomerListController  {
             this.showErrorAlert(errorMsg);
             LOGGER.log(Level.SEVERE,errorMsg);            
         }    
-        }
+    }
     
     /**
      * Initializes the controller class.
      */
-  
     
+  //Seleccionar una fila de la tabla
+    
+  public void handleOnSelectCustomer(ObservableValue observable, Object oldValue, Object newValue) {
+        //Si una fila esta seleccionada mover los datos de la fila a los campos
+           if (newValue != null) { 
+                tfBalance.setText(
+                    ((Customer)tbCustomer.getSelectionModel().getSelectedItem())
+                            .getPosition().toString());
+                String texto = tfBalance.getText();
+                Double Balance=0.0;
+                try {
+                    Balance = Double.parseDouble(texto);
+                    } 
+                catch (NumberFormatException e) {
+                    System.err.println("No se puede convertir a nimero");
+                    e.printStackTrace();
+                    }
+                if (Balance>0){
+                    tfBalance.setStyle("-fx-background-color: green;");
+                }
+                else{
+                    if (Balance<0){
+                        tfBalance.setStyle("-fx-background-color: red;");
+                    }
+                    tfBalance.setStyle("-fx-background-color: orange;");
+                }
+           }             
+            else {
+                    LOGGER.info("Customer no seleccionado");            
+        } 
+    }
 
     public void handleExitAction(Event event){
         try{

@@ -8,11 +8,11 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" prefHeight="525.0" prefWidth="785.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="crudbankjfxclient.view.CustomerListController">
+<AnchorPane id="AnchorPane" prefHeight="525.0" prefWidth="770.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="crudbankjfxclient.view.CustomerListController">
    <children>
-      <Button fx:id="btExit" layoutX="645.0" layoutY="480.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="100.0" text="Exit" />
-      <TextField fx:id="tfBalance" editable="false" layoutX="49.0" layoutY="480.0" prefHeight="26.0" prefWidth="150.0" />
-      <TableView fx:id="tbCustomer" layoutX="47.0" layoutY="62.0" prefHeight="390.0" prefWidth="697.0">
+      <Button fx:id="btExit" layoutX="642.0" layoutY="476.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="100.0" text="Exit" />
+      <TextField fx:id="tfBalance" alignment="CENTER" editable="false" layoutX="26.0" layoutY="476.0" prefHeight="26.0" prefWidth="150.0" />
+      <TableView fx:id="tbCustomer" layoutX="24.0" layoutY="62.0" prefHeight="390.0" prefWidth="718.0">
         <columns>
           <TableColumn fx:id="tcId" prefWidth="110.0" text="Id" />
           <TableColumn fx:id="tcFirstName" prefWidth="150.0" text="First Name" />
@@ -21,7 +21,7 @@
             <TableColumn fx:id="tcTotalBalance" prefWidth="150.0" text="Total Balance" />
         </columns>
       </TableView>
-      <Label layoutX="47.0" layoutY="462.0" text="Total Balance" />
+      <Label layoutX="24.0" layoutY="458.0" text="Total Balance" />
       <Label fx:id="lbCustomrt" layoutX="47.0" layoutY="14.0" text="CUSTOMERS">
          <font>
             <Font size="24.0" />
