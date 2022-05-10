@@ -173,24 +173,20 @@ public class CustomerListController  {
                 Double Balance=0.0;
                 try {
                     Balance = Double.parseDouble(texto);
+                    if (Balance>0)
+                        tfBalance.setStyle("-fx-background-color: green;");
+                    else if (Balance<0)
+                        tfBalance.setStyle("-fx-background-color: red;");
+                    else
+                        tfBalance.setStyle("-fx-background-color: orange;"); 
                     } 
                 catch (NumberFormatException e) {
-                    System.err.println("No se puede convertir a nimero");
+                    System.err.println("No se puede convertir a numero");
                     e.printStackTrace();
-                    }
-                if (Balance>0){
-                    tfBalance.setStyle("-fx-background-color: green;");
                 }
-                else{
-                    if (Balance<0){
-                        tfBalance.setStyle("-fx-background-color: red;");
-                    }
-                    tfBalance.setStyle("-fx-background-color: orange;");
-                }
-           }             
-            else {
-                    LOGGER.info("Customer no seleccionado");            
-        } 
+            } 
+            else
+                LOGGER.info("Customer no seleccionado");            
     }
 
     public void handleExitAction(Event event){
